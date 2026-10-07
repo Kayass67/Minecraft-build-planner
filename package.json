@@ -17,6 +17,7 @@
     "framer-motion": "^14.0.0",
     "litematic-parser": "^1.0.0",
     "lucide-react": "^1.52.0",
+    "minecraft-data": "^3.117.0",
     "next": "16.4.0",
     "pako": "^3.0.2",
     "prismarine-nbt": "^2.8.0",
