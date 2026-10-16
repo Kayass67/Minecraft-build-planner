@@ -1,6 +1,6 @@
 import { NormalizedSchematic } from '../types';
 import { MaterialAnalysis, GatheringPlan } from './types';
-import { getDefaultRecipe, normalizeName, getItemByName, getItemById } from './recipes';
+import { getDefaultRecipe, normalizeName, getItemByName, getItemById, formatDisplayName } from './recipes';
 import { getGatheringCategory } from './categories';
 
 export function analyzeSchematic(schematic: NormalizedSchematic): MaterialAnalysis {
@@ -47,7 +47,7 @@ export function analyzeSchematic(schematic: NormalizedSchematic): MaterialAnalys
       craftedItems[itemData.name] = (craftedItems[itemData.name] || 0) + count;
       
       const craftsNeeded = Math.ceil(count / recipe.outputCount);
-      processingOperations[`craft_${itemData.name}`] = (processingOperations[`craft_${itemData.name}`] || 0) + craftsNeeded;
+      processingOperations[itemData.name] = (processingOperations[itemData.name] || 0) + craftsNeeded;
 
       const newVisited = new Set(visited);
       newVisited.add(itemId);
@@ -89,11 +89,31 @@ export function analyzeSchematic(schematic: NormalizedSchematic): MaterialAnalys
 
   for (const [material, count] of Object.entries(baseMaterials)) {
     const category = getGatheringCategory(material);
-    gatheringPlan.categories[category][material] = count;
+    gatheringPlan.categories[category][material] = {
+      id: material,
+      displayName: formatDisplayName(material),
+      count,
+      isOperation: false,
+      operationType: 'gather'
+    };
   }
 
-  for (const [operation, count] of Object.entries(processingOperations)) {
-    gatheringPlan.categories['Processing'][operation] = count;
+  for (const [operationItem, count] of Object.entries(processingOperations)) {
+    const category = getGatheringCategory(operationItem);
+    const existing = gatheringPlan.categories[category][operationItem];
+    if (existing) {
+      existing.count += count;
+      existing.isOperation = true;
+      existing.operationType = 'craft';
+    } else {
+      gatheringPlan.categories[category][operationItem] = {
+        id: operationItem,
+        displayName: formatDisplayName(operationItem),
+        count,
+        isOperation: true,
+        operationType: 'craft'
+      };
+    }
   }
 
   return {

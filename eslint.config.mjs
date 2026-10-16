@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "extract-data.js",
+    "scratch-*.ts",
+    "test-*.ts",
   ]),
 ]);
 

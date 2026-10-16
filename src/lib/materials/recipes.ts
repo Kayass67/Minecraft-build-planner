@@ -1,6 +1,17 @@
-import mcDataInit from 'minecraft-data';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import itemsData from './data/items.json';
+import blocksData from './data/blocks.json';
+import recipesData from './data/recipes.json';
+import itemsByNameData from './data/itemsByName.json';
+import blocksByNameData from './data/blocksByName.json';
 
-const mcData = mcDataInit('1.20.4');
+export const mcData = {
+  items: itemsData as Record<string, any>,
+  blocks: blocksData as Record<string, any>,
+  recipes: recipesData as Record<string, any>,
+  itemsByName: itemsByNameData as Record<string, any>,
+  blocksByName: blocksByNameData as Record<string, any>
+};
 
 export interface RecipeRequirement {
   id: number;
@@ -18,6 +29,17 @@ export interface RecipeResult {
  */
 export function normalizeName(name: string): string {
   return name.replace(/^minecraft:/, '');
+}
+
+/**
+ * Returns a clean, user-facing display name without operation prefixes.
+ * Prefers official Minecraft displayName if available.
+ */
+export function formatDisplayName(idOrName: string): string {
+  const clean = normalizeName(idOrName).replace(/^craft_/, '');
+  return clean
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 /**
@@ -45,7 +67,6 @@ export function getDefaultRecipe(itemId: number): RecipeResult | null {
   }
 
   // Deterministically take the first recipe
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recipe: any = recipes[0];
   const ingredientsMap: Record<number, number> = {};
 

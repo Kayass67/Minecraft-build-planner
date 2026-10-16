@@ -21,6 +21,14 @@ export type GatheringCategory =
   | 'Processing'
   | 'Other';
 
+export interface GatheringPlanItem {
+  id?: string;
+  displayName: string;
+  count: number;
+  isOperation?: boolean;
+  operationType?: 'craft' | 'smelt' | 'gather';
+}
+
 export interface GatheringPlan {
-  categories: Record<GatheringCategory, Record<string, number>>;
+  categories: Record<GatheringCategory, Record<string, GatheringPlanItem>>;
 }

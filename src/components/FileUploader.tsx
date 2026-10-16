@@ -10,7 +10,7 @@ export function FileUploader({
   onParsed,
   onError,
 }: {
-  onParsed: (data: NormalizedSchematic) => void;
+  onParsed: (data: NormalizedSchematic, fileInfo?: { filename: string }) => void;
   onError: (error: string) => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -44,7 +44,7 @@ export function FileUploader({
         setParseStatus(status);
       });
       
-      onParsed(schematic);
+      onParsed(schematic, { filename: file.name });
     } catch (e: unknown) {
       console.error(e);
       if (e instanceof Error) {
